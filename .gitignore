@@ -1,2 +1,33 @@
+# Environment and secrets
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data and Models
+data/*.zip
+data/*.tar.gz
+*.db
+*.sqlite3
+
+# Temporary logs / scripts
+*.log
+inspect_details.py
+inspect_notebooks.py
+spark_cells.txt
+baseline_cells.txt
+
+# Document files
 *.docx
 *.pdf

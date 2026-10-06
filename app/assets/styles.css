@@ -1,0 +1,684 @@
+/* ==========================================================================
+   🎬 MovieMind - Premium Cinema Streaming Design System
+   Inspired by Netflix / Apple TV Production UI
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --bg-main: #0c0d10;
+  --bg-surface: #14151a;
+  --bg-card: #181920;
+  --bg-pill: #1f2029;
+  --bg-pill-hover: #292a36;
+  
+  --brand-red: #e50914;
+  --brand-red-hover: #b80710;
+  --accent-gold: #ffb703;
+  --text-white: #ffffff;
+  --text-muted: #8e90a0;
+  --text-dim: #5c5d6e;
+  
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-active: rgba(229, 9, 20, 0.4);
+  
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+  
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.7);
+  --shadow-hover: 0 14px 28px rgba(0, 0, 0, 0.85);
+}
+
+/* Global Reset */
+html, body, [class*="css"] {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  color: var(--text-white);
+  background-color: var(--bg-main) !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+.stApp {
+  background-color: var(--bg-main) !important;
+  background-image: none !important;
+}
+
+/* Hide default streamlit chrome */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header[data-testid="stHeader"] {
+  background: rgba(12, 13, 16, 0.95) !important;
+  backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Top Navbar
+   -------------------------------------------------------------------------- */
+.top-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 0 1.25rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 1.5rem;
+}
+
+.brand-logo {
+  font-size: 1.55rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: var(--brand-red);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.8rem;
+}
+
+.nav-item {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.nav-item:hover, .nav-item.active {
+  color: var(--text-white);
+}
+
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  background-color: var(--brand-red);
+  border-radius: 50%;
+}
+
+.user-badge-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-white);
+}
+
+.avatar-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e50914, #ff5460);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* --------------------------------------------------------------------------
+   Hero Banner Section (Matching download.jpg)
+   -------------------------------------------------------------------------- */
+.hero-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 440px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 2.2rem;
+  background-size: cover;
+  background-position: center 20%;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(12, 13, 16, 0.96) 25%, rgba(12, 13, 16, 0.7) 60%, rgba(12, 13, 16, 0.1) 100%),
+              linear-gradient(to top, rgba(12, 13, 16, 1) 0%, transparent 40%);
+  padding: 3rem 2.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 680px;
+}
+
+.hero-meta-badge {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hero-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  color: #d1d2de;
+}
+
+.rating-star-gold {
+  color: var(--accent-gold);
+  font-weight: 700;
+}
+
+.age-badge {
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.hero-title-text {
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1.05;
+  color: #ffffff;
+  margin-bottom: 0.85rem;
+  letter-spacing: -0.02em;
+}
+
+.hero-description {
+  font-size: 0.95rem;
+  color: #b3b5c6;
+  line-height: 1.55;
+  margin-bottom: 1.6rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+/* Netflix Style Pill Buttons */
+.btn-watch {
+  background-color: var(--brand-red) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 0.88rem !important;
+  padding: 0.6rem 1.6rem !important;
+  border-radius: var(--radius-pill) !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.btn-watch:hover {
+  background-color: var(--brand-red-hover) !important;
+  transform: translateY(-2px) !important;
+}
+
+.btn-add-list {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(8px) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 0.88rem !important;
+  padding: 0.6rem 1.5rem !important;
+  border-radius: var(--radius-pill) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-add-list:hover {
+  background-color: rgba(255, 255, 255, 0.22) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Section Headers & Tabs
+   -------------------------------------------------------------------------- */
+.section-row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2.2rem 0 1rem 0;
+}
+
+.section-title-large {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  letter-spacing: -0.01em;
+}
+
+.sub-tabs-list {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.sub-tab-item {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.sub-tab-item:hover, .sub-tab-item.active {
+  color: var(--text-white);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Filter Pills Bar (Matching download.jpg)
+   -------------------------------------------------------------------------- */
+.genre-pills-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  overflow-x: auto;
+  padding: 0.4rem 0 1.2rem 0;
+  scrollbar-width: none;
+}
+
+.genre-pills-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.pill-button {
+  background: var(--bg-pill);
+  color: #c4c6d6;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.38rem 1rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.pill-button:hover {
+  background: var(--bg-pill-hover);
+  color: #ffffff;
+}
+
+.pill-button.active {
+  background: var(--brand-red);
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Movie Poster Card (Strictly Matching download.jpg)
+   -------------------------------------------------------------------------- */
+.poster-card-container {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.poster-card-container:hover {
+  transform: translateY(-6px);
+}
+
+.poster-image-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #17181f;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.poster-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.poster-card-container:hover .poster-image-box img {
+  transform: scale(1.04);
+}
+
+.als-tag-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--brand-red);
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.card-details-box {
+  padding: 0.65rem 0.2rem 0.2rem 0.2rem;
+}
+
+.card-movie-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0.25rem;
+}
+
+.card-subline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.card-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+}
+
+.card-rating-gold {
+  color: var(--accent-gold);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+/* --------------------------------------------------------------------------
+   Expanded Movie Banner (Matching Jurassic World banner in download.jpg)
+   -------------------------------------------------------------------------- */
+.expanded-movie-hero {
+  position: relative;
+  width: 100%;
+  min-height: 480px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-size: cover;
+  background-position: center 25%;
+  margin: 1.5rem 0 2.5rem 0;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-md);
+}
+
+.expanded-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(12, 13, 16, 0.95) 30%, rgba(12, 13, 16, 0.6) 65%, rgba(12, 13, 16, 0.2) 100%),
+              linear-gradient(to top, rgba(12, 13, 16, 1) 0%, transparent 35%);
+  padding: 3rem 2.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.expanded-top-close {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close-btn-round {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.close-btn-round:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.expanded-nav-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1.2rem;
+  margin-top: 1.5rem;
+}
+
+.expanded-subtabs {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.exp-tab {
+  color: var(--text-muted);
+  cursor: pointer;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.exp-tab.active {
+  color: #ffffff;
+}
+
+.exp-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--brand-red);
+}
+
+/* --------------------------------------------------------------------------
+   Streamlit Native Overrides for Clean Production Look
+   -------------------------------------------------------------------------- */
+
+/* Streamlit Multipage Navigation Styling in Sidebar */
+[data-testid="stSidebarNav"] {
+  background-color: transparent !important;
+  padding-bottom: 0.75rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  margin-bottom: 1rem !important;
+}
+
+[data-testid="stSidebarNav"] ul {
+  padding-left: 0 !important;
+  list-style: none !important;
+}
+
+[data-testid="stSidebarNav"] li {
+  margin-bottom: 3px !important;
+}
+
+[data-testid="stSidebarNav"] li a {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  color: #cbd5e1 !important;
+  border-radius: 6px !important;
+  padding: 0.45rem 0.8rem !important;
+  font-weight: 500 !important;
+  font-size: 0.88rem !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+[data-testid="stSidebarNav"] li a:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+[data-testid="stSidebarNav"] li a[aria-current="page"],
+[data-testid="stSidebarNav"] li a[data-testid="stSidebarNavLinkActive"] {
+  background-color: rgba(229, 9, 20, 0.18) !important;
+  color: #ffffff !important;
+  border-left: 3px solid var(--brand-red) !important;
+  font-weight: 700 !important;
+}
+
+[data-testid="stSidebarNav"] li a span,
+[data-testid="stSidebarNav"] li a div {
+  color: inherit !important;
+}
+
+/* Force entire Sidebar and all containers to match dark theme */
+section[data-testid="stSidebar"],
+[data-testid="stSidebar"],
+[data-testid="stSidebarContent"],
+[data-testid="stSidebarHeader"],
+[data-testid="stSidebarUserContent"],
+div[data-testid="stSidebarCollapseButton"],
+section[data-testid="stSidebar"] > div {
+  background-color: #0e0f13 !important;
+  color: #ffffff !important;
+  border-right: 1px solid var(--border-subtle) !important;
+}
+
+section[data-testid="stSidebar"] * {
+  color: #e2e8f0 !important;
+}
+
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] span,
+section[data-testid="stSidebar"] div {
+  color: #e2e8f0 !important;
+}
+
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3,
+section[data-testid="stSidebar"] h4,
+section[data-testid="stSidebar"] strong {
+  color: #ffffff !important;
+}
+
+/* Radio buttons inside sidebar */
+section[data-testid="stSidebar"] div[data-testid="stRadio"] label {
+  color: #cbd5e1 !important;
+  font-weight: 500 !important;
+  background-color: transparent !important;
+}
+
+section[data-testid="stSidebar"] div[data-testid="stRadio"] label:hover {
+  color: #ffffff !important;
+}
+
+section[data-testid="stSidebar"] div[data-testid="stRadio"] label div[data-testid="stMarkdownContainer"] p {
+  color: #e2e8f0 !important;
+}
+
+/* Radio circle active color */
+section[data-testid="stSidebar"] div[data-testid="stRadio"] input:checked + div {
+  background-color: var(--brand-red) !important;
+  border-color: var(--brand-red) !important;
+}
+
+/* Sidebar selectbox and inputs */
+section[data-testid="stSidebar"] div[data-baseweb="select"] > div,
+section[data-testid="stSidebar"] div[data-baseweb="input"] {
+  background-color: #1a1b23 !important;
+  border: 1px solid var(--border-subtle) !important;
+  color: #ffffff !important;
+}
+
+section[data-testid="stSidebar"] hr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-testid="stSidebarCollapseButton"] button,
+[data-testid="stSidebarCollapseButton"] svg,
+[data-testid="stSidebarHeader"] button,
+[data-testid="stSidebarHeader"] svg {
+  color: #e2e8f0 !important;
+  fill: #e2e8f0 !important;
+}
+
+section[data-testid="stSidebar"] ::-webkit-scrollbar {
+  width: 6px !important;
+}
+section[data-testid="stSidebar"] ::-webkit-scrollbar-track {
+  background: #0e0f13 !important;
+}
+section[data-testid="stSidebar"] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-radius: 4px !important;
+}
+
+.stButton>button {
+  background-color: var(--brand-red) !important;
+  color: #ffffff !important;
+  border-radius: var(--radius-pill) !important;
+  font-weight: 600 !important;
+  border: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.stButton>button:hover {
+  background-color: var(--brand-red-hover) !important;
+  transform: translateY(-1px) !important;
+}
+
+div[data-baseweb="input"] {
+  background-color: #17181f !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-pill) !important;
+  color: #ffffff !important;
+}
+
+div[data-baseweb="select"] > div {
+  background-color: #17181f !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-sm) !important;
+  color: #ffffff !important;
+}
