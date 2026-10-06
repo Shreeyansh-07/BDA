@@ -45,15 +45,15 @@ def render_navbar():
 
     with col_user:
         if user:
-            initial = user['username'][0].upper() if user.get('username') else "U"
-            st.markdown(f"""
-            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.6rem; padding-top: 0.4rem;">
-                <div class="avatar-circle">{initial}</div>
-                <span style="font-size: 0.85rem; font-weight: 600; color: #fff;">{user['username']}</span>
-            </div>
-            """, unsafe_allow_html=True)
+            display_name = user.get("username", "Account")
+            if st.button(f"👤 {display_name}", key="nav_user_profile_btn", use_container_width=True):
+                st.session_state["current_page"] = "Profile"
+                try:
+                    st.switch_page("pages/profile.py")
+                except Exception:
+                    st.rerun()
         else:
-            if st.button("Sign In", key="nav_signin_btn", use_container_width=True):
+            if st.button("🔑 Sign In / Sign Up", key="nav_signin_btn", use_container_width=True):
                 st.session_state["current_page"] = "Profile"
                 try:
                     st.switch_page("pages/profile.py")

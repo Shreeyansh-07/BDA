@@ -23,6 +23,13 @@ DATA_DIR = Path(os.getenv("DATA_DIR", BASE_DIR / "data"))
 MODELS_DIR = Path(os.getenv("MODELS_DIR", BASE_DIR / "models"))
 DB_PATH = Path(os.getenv("DATABASE_PATH", DATA_DIR / "app_database.db"))
 
+# MongoDB Database Configuration
+MONGODB_URI = os.getenv(
+    "MONGODB_URI",
+    "mongodb+srv://keshavsingh10008:Shreeyansh%4027@cluster0.akqenop.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+)
+MONGODB_DB_NAME = os.getenv("MONGODB_DB_NAME", "moviemind")
+
 # ALS Hyperparameters (Preserved from SparkNotebook.ipynb)
 ALS_PARAMS = {
     "maxIter": int(os.getenv("ALS_MAX_ITER", 10)),

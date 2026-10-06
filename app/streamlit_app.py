@@ -27,12 +27,7 @@ if "current_page" not in st.session_state:
     st.session_state["current_page"] = "Home"
 
 if "user" not in st.session_state:
-    # Default initial user session for rich showcase
-    st.session_state["user"] = {
-        "id": 1,
-        "username": "MovieLens_User_1",
-        "created_at": "2026-10-06"
-    }
+    st.session_state["user"] = None
 
 if "selected_movie_id" not in st.session_state:
     st.session_state["selected_movie_id"] = None

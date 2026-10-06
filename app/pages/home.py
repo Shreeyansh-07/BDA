@@ -58,14 +58,19 @@ def render_home():
                 st.session_state["current_page"] = "Movie Details"
                 st.rerun()
         with col_add:
-            in_list = user_service.is_in_watchlist(user_id, featured["movieId"])
+            email = user.get("email") if user else None
+            in_list = user_service.is_in_watchlist(user_id, featured["movieId"], email=email)
             btn_label = "✓ IN LIST" if in_list else "+ ADD LIST"
             if st.button(btn_label, key="hero_add_list_btn", use_container_width=True):
-                if in_list:
-                    user_service.remove_from_watchlist(user_id, featured["movieId"])
+                if not user:
+                    st.toast("Please sign in or register with your Mail ID to save your Watchlist!", icon="🔑")
+                    st.session_state["current_page"] = "Profile"
+                    st.rerun()
+                elif in_list:
+                    user_service.remove_from_watchlist(user_id, featured["movieId"], email=email)
                     st.toast("Removed from My List", icon="🗑️")
                 else:
-                    user_service.add_to_watchlist(user_id, featured["movieId"])
+                    user_service.add_to_watchlist(user_id, featured["movieId"], email=email)
                     st.toast("Added to My List", icon="📑")
                 st.rerun()
 

@@ -59,6 +59,32 @@ def render_sidebar():
 
         st.markdown("<hr style='margin: 1.5rem 0; border: none; border-bottom: 1px solid rgba(255,255,255,0.07);'>", unsafe_allow_html=True)
 
+        # Active User Session Display
+        user = st.session_state.get("user")
+        if user:
+            u_email = user.get("email", "")
+            u_name = user.get("username", "Movie Fan")
+            st.markdown(f"""
+            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 6px; padding: 0.65rem 0.85rem; margin-bottom: 1rem;">
+                <div style="font-size: 0.72rem; color: #34d399; font-weight: 700;">🟢 LOGGED IN</div>
+                <div style="color: #fff; font-weight: 700; font-size: 0.88rem;">{u_name}</div>
+                <div style="color: #94a3b8; font-size: 0.75rem; word-break: break-all;">{u_email}</div>
+            </div>
+            """, unsafe_allow_html=True)
+            if st.button("🚪 Logout", key="sidebar_logout_btn", use_container_width=True):
+                st.session_state["user"] = None
+                st.rerun()
+        else:
+            st.markdown("""
+            <div style="background: rgba(229, 9, 20, 0.08); border: 1px solid rgba(229, 9, 20, 0.25); border-radius: 6px; padding: 0.65rem 0.85rem; margin-bottom: 1rem;">
+                <div style="font-size: 0.72rem; color: #ff4d4d; font-weight: 700;">👤 GUEST SESSION</div>
+                <div style="color: #94a3b8; font-size: 0.78rem;">Sign in with your Mail ID to save watchlist and personal recs.</div>
+            </div>
+            """, unsafe_allow_html=True)
+            if st.button("🔑 Sign In / Sign Up", key="sidebar_signin_btn", use_container_width=True):
+                st.session_state["current_page"] = "Profile"
+                st.rerun()
+
         # Academic User Simulator
         st.markdown("<div style='font-size: 0.8rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem;'>USER SIMULATOR</div>", unsafe_allow_html=True)
         st.caption("Switch between trained MovieLens users or test cold-start fallback:")
@@ -73,6 +99,7 @@ def render_sidebar():
                 st.session_state["user"] = {
                     "id": 999999,
                     "username": "ColdStart_Guest",
+                    "email": "coldstart@guest.com",
                     "created_at": "2026-10-06"
                 }
                 st.toast("Active profile: New User (Testing Cold Start)", icon="❄️")
@@ -80,6 +107,7 @@ def render_sidebar():
                 st.session_state["user"] = {
                     "id": int(sim_user),
                     "username": f"User_{sim_user}",
+                    "email": f"user{sim_user}@movielens.org",
                     "created_at": "2026-10-06"
                 }
                 st.toast(f"Active profile: User {sim_user} (Testing Spark ALS)", icon="⚡")
@@ -91,9 +119,9 @@ def render_sidebar():
         st.markdown("""
         <div style="background: #14151a; padding: 0.85rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.07); font-size: 0.75rem;">
             <div style="font-weight: 700; color: #e50914; margin-bottom: 0.4rem; letter-spacing: 0.05em;">BIG DATA PIPELINE</div>
+            <div style="color: #34d399;">• Database: MongoDB Atlas</div>
             <div style="color: #8e90a0;">• Model: Spark MLlib ALS</div>
             <div style="color: #8e90a0;">• HDFS: Configured</div>
             <div style="color: #8e90a0;">• 32M Benchmark RMSE: ~0.81</div>
-            <div style="color: #8e90a0;">• TMDb Cache: 97+ Cached</div>
         </div>
         """, unsafe_allow_html=True)

@@ -89,7 +89,8 @@ def render_movie_details():
     """, unsafe_allow_html=True)
 
     # 2. Action Controls (Watch & Add List)
-    in_watchlist = user_service.is_in_watchlist(user_id, movie_id)
+    email = user.get("email") if user else None
+    in_watchlist = user_service.is_in_watchlist(user_id, movie_id, email=email)
     col_play, col_wl, col_rate_btn, col_blank = st.columns([1.6, 1.8, 2.2, 4.4])
     with col_play:
         if st.button("▶ WATCH NOW", key="details_watch_btn", use_container_width=True):
@@ -97,15 +98,19 @@ def render_movie_details():
     with col_wl:
         wl_label = "✓ IN LIST" if in_watchlist else "+ ADD LIST"
         if st.button(wl_label, key="details_add_list_btn", use_container_width=True):
-            if in_watchlist:
-                user_service.remove_from_watchlist(user_id, movie_id)
+            if not user:
+                st.toast("Please sign in or register with your Mail ID to save your Watchlist!", icon="🔑")
+                st.session_state["current_page"] = "Profile"
+                st.rerun()
+            elif in_watchlist:
+                user_service.remove_from_watchlist(user_id, movie_id, email=email)
                 st.toast("Removed from My List", icon="🗑️")
             else:
-                user_service.add_to_watchlist(user_id, movie_id)
+                user_service.add_to_watchlist(user_id, movie_id, email=email)
                 st.toast("Added to My List", icon="📑")
             st.rerun()
     with col_rate_btn:
-        user_curr_rating = user_service.get_user_rating(user_id, movie_id)
+        user_curr_rating = user_service.get_user_rating(user_id, movie_id, email=email)
         rate_str = f"Your Rating: {user_curr_rating}★" if user_curr_rating else "Rate Movie"
         st.markdown(f"<div style='text-align: center; padding-top: 0.4rem; color: #ffb703; font-weight: 600; font-size: 0.85rem;'>{rate_str}</div>", unsafe_allow_html=True)
 
@@ -162,7 +167,7 @@ def render_movie_details():
         st.markdown("<h4 style='font-size: 1rem; color: #fff;'>Rate this Movie</h4>", unsafe_allow_html=True)
         new_val = st.slider("Your Rating (1.0 to 5.0 stars)", min_value=1.0, max_value=5.0, value=float(user_curr_rating or 4.0), step=0.5)
         if st.button("Save Rating", key="btn_save_rating_details"):
-            user_service.rate_movie(user_id, movie_id, new_val)
+            user_service.rate_movie(user_id, movie_id, new_val, email=email)
             st.success(f"Rating {new_val}★ saved to database!")
             st.rerun()
 
