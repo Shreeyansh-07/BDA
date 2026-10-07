@@ -12,11 +12,16 @@ from app.services.recommender import recommender_service
 from app.components.movie_card import render_movie_card
 
 def render_watchlist():
-    """Renders user's saved watchlist with 6 columns and evaluates personal recommendations from it."""
+    """Renders user's saved watchlist and evaluates personal recommendations from it."""
     user = st.session_state.get("user")
-    user_id = user["id"] if user else None
-    username = user.get("username", "Guest") if user else "Guest"
-    email = user.get("email") if user else None
+    if not user:
+        from app.components.auth_portal import render_auth_portal
+        render_auth_portal()
+        return
+
+    user_id = user.get("id", 1)
+    username = user.get("username", "Movie Fan")
+    email = user.get("email")
 
     st.markdown(f"""
     <div style="margin-bottom: 1.5rem;">
@@ -24,41 +29,35 @@ def render_watchlist():
             My List ({username})
         </div>
         <div style="font-size: 0.85rem; color: #94a3b8;">
-            Synchronized with MongoDB Atlas. Every title you save here directly refines your personalized recommendations.
+            Synchronized in real-time with MongoDB Atlas. Every title you save here directly refines your personalized recommendations.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    if not user:
-        st.markdown("""
-        <div style="background: #14151a; border: 1px solid rgba(255,255,255,0.07); padding: 2.5rem 1.5rem; text-align: center; border-radius: 8px;">
-            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔒</div>
-            <h3 style="color: #fff; margin-bottom: 0.5rem;">Sign In to Save Your Watchlist</h3>
-            <p style="color: #8e90a0; max-width: 500px; margin: 0 auto 1.5rem auto;">
-                Create an account or log in with your Mail ID so you can access your saved movies anytime and receive personalized recommendations.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-        col_btn, _ = st.columns([3, 7])
-        with col_btn:
-            if st.button("🔑 Sign In / Sign Up", use_container_width=True, key="wl_login_btn"):
-                st.session_state["current_page"] = "Profile"
-                st.rerun()
-        return
-
     movie_ids = user_service.get_watchlist(user_id, email=email)
     if not movie_ids:
         st.markdown("""
-        <div style="background: #14151a; border: 1px solid rgba(255,255,255,0.07); padding: 3rem 1.5rem; text-align: center; border-radius: 8px;">
+        <div style="background: #14151a; border: 1px solid rgba(255,255,255,0.07); padding: 2.5rem 1.5rem; text-align: center; border-radius: 12px; margin-bottom: 2rem;">
             <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🍿</div>
-            <h3 style="color: #fff; margin-bottom: 0.5rem;">Your List is Empty</h3>
-            <p style="color: #8e90a0;">Click "+ ADD LIST" on any title to save movies here and trigger customized recommendations.</p>
+            <h3 style="color: #fff; margin-bottom: 0.5rem;">Your Watchlist is Empty</h3>
+            <p style="color: #8e90a0; max-width: 550px; margin: 0 auto 1.5rem auto;">
+                Click <strong>+ List</strong> on any film below or across the catalog to save movies to MongoDB. Our engine will immediately evaluate your taste!
+            </p>
         </div>
         """, unsafe_allow_html=True)
+
+        st.markdown("<h4 style='font-size: 1.1rem; color: #fff;'>✨ Recommended Starters (Add to My List to Personalize):</h4>", unsafe_allow_html=True)
+        starter_ids = [1, 296, 318, 593, 2571, 260]
+        starter_movies = catalog_service.get_movies_by_ids(starter_ids)
+        cols_starters = st.columns(6)
+        for idx, sm in enumerate(starter_movies):
+            with cols_starters[idx]:
+                render_movie_card(sm, key_prefix=f"wl_empty_starter_{idx}")
         return
 
     # Watchlist Grid
     movies = catalog_service.get_movies_by_ids(movie_ids)
+    st.markdown(f"<div style='font-size: 0.9rem; color: #34d399; font-weight: 700; margin-bottom: 0.8rem;'>{len(movies)} saved titles in MongoDB Atlas</div>", unsafe_allow_html=True)
     cols_per_row = 6
     for i in range(0, len(movies), cols_per_row):
         batch = movies[i:i + cols_per_row]

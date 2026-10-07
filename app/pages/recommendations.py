@@ -7,14 +7,21 @@ if str(ROOT_DIR) not in sys.path:
 
 import streamlit as st
 from app.services.recommender import recommender_service
+from app.services.movies import catalog_service
+from app.services.users import user_service
 from app.components.movie_card import render_movie_card
 
 def render_recommendations():
-    """Renders personalized recommendations feed in Netflix styling, evaluated on user's Watchlist."""
+    """Renders personalized recommendations feed evaluated on the user's Watchlist."""
     user = st.session_state.get("user")
-    user_id = user["id"] if user else None
-    username = user.get("username", "Guest") if user else "Guest"
-    email = user.get("email") if user else None
+    if not user:
+        from app.components.auth_portal import render_auth_portal
+        render_auth_portal()
+        return
+
+    user_id = user.get("id", 1)
+    username = user.get("username", "Movie Fan")
+    email = user.get("email")
 
     # Context Header
     st.markdown(f"""
@@ -25,41 +32,60 @@ def render_recommendations():
         <div style="font-size: 2.2rem; font-weight: 900; color: #fff;">
             Recommended For {username}
         </div>
+        <div style="font-size: 0.85rem; color: #94a3b8;">
+            Tuned in real-time based on your saved titles in My List and MongoDB Atlas taste evaluation.
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-    if not user:
-        st.markdown("""
-        <div style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-            <div style="color: #cbd5e1; font-size: 0.9rem;">
-                🔑 <strong>Not signed in?</strong> Create an account with your Mail ID to save your personal Watchlist in MongoDB and unlock custom ALS recommendations!
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        if st.button("Sign In / Sign Up Now", key="rec_login_prompt"):
-            st.session_state["current_page"] = "Profile"
-            st.rerun()
-
     # Evaluate user's Watchlist
-    watchlist_eval = recommender_service.evaluate_watchlist(user_id, email=email) if user_id else {"count": 0, "titles": [], "top_genres": []}
+    watchlist_eval = recommender_service.evaluate_watchlist(user_id, email=email)
     wl_count = watchlist_eval["count"]
     wl_genres = watchlist_eval["top_genres"]
 
     if wl_count > 0:
         genres_str = " • ".join(wl_genres[:4]) if wl_genres else "Your Saved Titles"
+        titles_sample = ", ".join([f"'{t}'" for t in watchlist_eval["titles"][:3]])
         st.markdown(f"""
-        <div style="background: #14151a; border: 1px solid rgba(229, 9, 20, 0.3); padding: 0.85rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.88rem; color: #8e90a0;">
-            🍿 <strong>Evaluated from your Watchlist ({wl_count} saved):</strong> Top genres: <strong style="color: #fff;">{genres_str}</strong>
+        <div style="background: rgba(229, 9, 20, 0.08); border: 1px solid rgba(229, 9, 20, 0.35); padding: 0.95rem 1.35rem; border-radius: 10px; margin-bottom: 1.5rem;">
+            <div style="font-size: 0.76rem; color: #ff4d4d; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">
+                🎯 PERSONAL TASTE EVALUATION • {wl_count} TITLES IN MY LIST
+            </div>
+            <div style="color: #fff; font-size: 0.95rem; font-weight: 600; margin-top: 0.2rem;">
+                Top Affinity Genres: <span style="color: #38bdf8;">{genres_str}</span>
+            </div>
+            <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.2rem;">
+                Active seed titles: {titles_sample}{' and more' if wl_count > 3 else ''}. All recommendations below are weighted directly by your saved films.
+            </div>
         </div>
         """, unsafe_allow_html=True)
-    elif user:
+    else:
         st.markdown("""
-        <div style="background: #14151a; border: 1px solid rgba(255,255,255,0.07); padding: 0.85rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.88rem; color: #8e90a0;">
-            💡 <em>Your Watchlist is empty.</em> Add films to <strong>My List</strong> with "+ ADD LIST" on any title to customize these recommendations instantly!
+        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); padding: 1.1rem 1.35rem; border-radius: 10px; margin-bottom: 1.5rem;">
+            <div style="font-size: 0.76rem; color: #fbbf24; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">
+                💡 START CUSTOMIZING YOUR PERSONAL RECOMMENDATIONS
+            </div>
+            <div style="color: #fff; font-size: 0.95rem; font-weight: 600; margin-top: 0.2rem;">
+                Your Watchlist (My List) is currently empty.
+            </div>
+            <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 0.2rem;">
+                Click <strong>+ List</strong> on any movie card or use the quick-starters below to add movies to your list. Our engine evaluates your saved titles immediately!
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
-    # Number of titles slider & filter
+        # Quick Starter Row to populate watchlist with 1 click
+        st.markdown("<h4 style='font-size: 1rem; color: #fff;'>⚡ Popular Starter Picks (Add to My List to Personalize):</h4>", unsafe_allow_html=True)
+        starter_ids = [1, 296, 318, 593, 2571, 260] # Toy Story, Pulp Fiction, Shawshank, Silence of Lambs, Matrix, Star Wars
+        starter_movies = catalog_service.get_movies_by_ids(starter_ids)
+        col_starters = st.columns(6)
+        for idx, sm in enumerate(starter_movies):
+            with col_starters[idx]:
+                render_movie_card(sm, key_prefix=f"rec_starter_{idx}")
+
+        st.markdown("<hr style='margin: 1.8rem 0; border: none; border-bottom: 1px solid rgba(255,255,255,0.08);'>", unsafe_allow_html=True)
+
+    # Number of titles slider & analytics CTA
     col_s, col_ana = st.columns([4, 6])
     with col_s:
         num_titles = st.select_slider("Recommendation Batch Size", options=[6, 12, 18, 24], value=12)

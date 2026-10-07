@@ -34,9 +34,14 @@ def render_analytics():
     Plus Distributed Apache Spark ALS benchmarks.
     """
     user = st.session_state.get("user")
-    user_id = user["id"] if user else 1
-    username = user.get("username", f"User {user_id}") if user else "Demo User"
-    email = user.get("email") if user else None
+    if not user:
+        from app.components.auth_portal import render_auth_portal
+        render_auth_portal()
+        return
+
+    user_id = user.get("id", 1)
+    username = user.get("username", f"User {user_id}")
+    email = user.get("email")
 
     # Header
     st.markdown(f"""

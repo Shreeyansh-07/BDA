@@ -36,6 +36,7 @@ if "recently_viewed" not in st.session_state:
     st.session_state["recently_viewed"] = []
 
 # 4. Imports for UI Components & Pages
+from app.components.auth_portal import render_auth_portal
 from app.components.navbar import render_navbar
 from app.components.sidebar import render_sidebar
 from app.pages.home import render_home
@@ -47,7 +48,18 @@ from app.pages.profile import render_profile
 from app.pages.analytics import render_analytics
 
 def main():
-    # Render Navigation & Sidebar
+    user = st.session_state.get("user")
+
+    # ─────────────────────────────────────────────────────────────
+    # MANDATORY AUTHENTICATION GATEWAY
+    # As soon as the user visits, they must login/signup first
+    # before they can access the movie recommendation system.
+    # ─────────────────────────────────────────────────────────────
+    if not user:
+        render_auth_portal()
+        return
+
+    # Render Navigation & Sidebar for Authenticated Users
     render_navbar()
     render_sidebar()
 
@@ -57,17 +69,17 @@ def main():
     try:
         if page == "Home":
             render_home()
-        elif page == "Search":
+        elif page in ("Search", "Movies"):
             render_search()
         elif page == "Movie Details":
             render_movie_details()
         elif page == "Recommendations":
             render_recommendations()
-        elif page == "Watchlist":
+        elif page in ("Watchlist", "My List"):
             render_watchlist()
         elif page == "Profile":
             render_profile()
-        elif page == "System Analytics":
+        elif page in ("System Analytics", "Analytics"):
             render_analytics()
         else:
             render_home()

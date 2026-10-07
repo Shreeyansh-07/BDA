@@ -17,6 +17,12 @@ def render_movie_details():
     Renders the expanded movie details banner strictly matching the
     Jurassic World section in download.jpg.
     """
+    user = st.session_state.get("user")
+    if not user:
+        from app.components.auth_portal import render_auth_portal
+        render_auth_portal()
+        return
+
     movie_id = st.session_state.get("selected_movie_id")
     if not movie_id:
         popular = catalog_service.get_popular_movies(limit=1)

@@ -17,7 +17,8 @@ def render_profile():
     if user:
         _render_authenticated_profile(user)
     else:
-        _render_auth_forms()
+        from app.components.auth_portal import render_auth_portal
+        render_auth_portal()
 
 def _render_authenticated_profile(user: dict):
     user_id = user.get("id", 1)

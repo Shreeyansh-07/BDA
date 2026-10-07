@@ -11,11 +11,17 @@ from pymongo.errors import PyMongoError
 
 from config.config import DB_PATH, DATA_DIR, MONGODB_URI, MONGODB_DB_NAME
 
+try:
+    import certifi
+    _ca_file = certifi.where()
+except Exception:
+    _ca_file = None
+
 # Singleton Mongo client
 _mongo_client: Optional[MongoClient] = None
 
 def get_mongo_client() -> Optional[MongoClient]:
-    """Returns a connected MongoClient singleton, or None if connection fails."""
+    """Returns a connected MongoClient singleton with certifi TLS, or None if connection fails."""
     global _mongo_client
     if _mongo_client is not None:
         try:
@@ -26,7 +32,14 @@ def get_mongo_client() -> Optional[MongoClient]:
             _mongo_client = None
 
     try:
-        client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=5000, connectTimeoutMS=5000)
+        kwargs = {
+            "serverSelectionTimeoutMS": 10000,
+            "connectTimeoutMS": 10000,
+            "retryWrites": True,
+        }
+        if _ca_file:
+            kwargs["tlsCAFile"] = _ca_file
+        client = MongoClient(MONGODB_URI, **kwargs)
         client.admin.command("ping")
         _mongo_client = client
         return _mongo_client

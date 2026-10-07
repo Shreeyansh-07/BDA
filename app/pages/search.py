@@ -11,6 +11,12 @@ from app.components.movie_card import render_movie_card
 
 def render_search():
     """Renders the Movies catalog and search grid matching download.jpg."""
+    user = st.session_state.get("user")
+    if not user:
+        from app.components.auth_portal import render_auth_portal
+        render_auth_portal()
+        return
+
     st.markdown("""
     <div style="margin-bottom: 1.2rem;">
         <div style="font-size: 1.6rem; font-weight: 800; color: #fff;">🎬 Discover Movies</div>

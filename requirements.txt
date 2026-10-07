@@ -13,6 +13,7 @@ plotly>=5.18.0
 requests>=2.31.0
 python-dotenv>=1.0.0
 pymongo>=4.9.0
+certifi>=2024.0.0
 
 # Optional baseline implicit ALS (from exploration notebook)
 implicit>=0.7.0; platform_system != "Windows" or python_version < "3.12"

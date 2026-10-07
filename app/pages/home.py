@@ -16,7 +16,13 @@ from app.components.movie_card import render_movie_card
 def render_home():
     """Renders the Netflix-style homepage matching download.jpg."""
     user = st.session_state.get("user")
-    user_id = user["id"] if user else 1
+    if not user:
+        from app.components.auth_portal import render_auth_portal
+        render_auth_portal()
+        return
+
+    user_id = user.get("id", 1)
+    email = user.get("email")
 
     # 1. Featured Hero Banner (Matching the top banner in download.jpg)
     # Pick a critically acclaimed blockbuster for the hero (e.g. Inception or The Dark Knight)
@@ -100,12 +106,12 @@ def render_home():
     )
 
     # 4. Section 2: "⚡ Recommended For You (Apache Spark ALS)" (6 columns)
-    user_name = user["username"] if user else "User 1"
-    recs = recommender_service.recommend_movies(user_id=user_id, n=6)
+    user_name = user.get("username", "You")
+    recs = recommender_service.recommend_movies(user_id=user_id, n=6, email=email)
     render_movie_row(
         title=f"⚡ Recommended For You ({user_name})",
         movies=recs,
-        subtitle="Collaborative Filtering",
+        subtitle="Watchlist & Collaborative Filtering",
         key_prefix="spark_recs_home",
         cols_per_row=6
     )
